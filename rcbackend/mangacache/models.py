@@ -11,6 +11,13 @@ class MangaAuthor(models.Model):
     image = models.ImageField()
     description = models.CharField(max_length=1000)
 
+    def __str__(self):
+        return "name: {}\nurl: {}\ndescription: {}\n".format(
+            self.name,
+            self.url,
+            self.description
+        )
+
 
 class MangaCatalog(models.Model):
     """
@@ -20,6 +27,9 @@ class MangaCatalog(models.Model):
     manga_name = models.CharField(max_length=30)
     url = models.URLField()
     poster = models.ImageField()
+
+    def __str__(self):
+        return "manga: {}\nurl: {}".format(self.manga_name, self.url)
 
 
 class MangaPoster(models.Model):

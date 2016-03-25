@@ -41,6 +41,7 @@ def catalog_list(request):
 @csrf_exempt
 def manga(request, manga_name):
 
+    print(manga_name)
     try:
         catalog = MangaCatalog.objects.get(manga_name=manga_name)
     except MangaCatalog.DoesNotExist:
