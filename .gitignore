@@ -1,8 +1,6 @@
-<<<<<<< HEAD
 .idea/*
 *.bk
 rcbackend/mangacache/migrations/*
-=======
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -65,4 +63,3 @@ target/
 
 #Ipython Notebook
 .ipynb_checkpoints
->>>>>>> 85a0761ee47772bc6c6ba15290ffdc2065b37fb3
