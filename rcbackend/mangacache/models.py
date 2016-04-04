@@ -2,7 +2,7 @@ from django.db import models
 
 
 # Create your models here.
-class MangaAuthor(models.Model):
+class Author(models.Model):
     """
         Для получения манги по автору. Нужно ли?
     """
@@ -19,12 +19,12 @@ class MangaAuthor(models.Model):
         )
 
 
-class MangaCatalog(models.Model):
+class Manga(models.Model):
     """
         Для католога манги. содержит ссылки на все главы манги
     """
-    author = models.ForeignKey(MangaAuthor, related_name='author_works')
-    manga_name = models.CharField(max_length=30)
+    author = models.ForeignKey(Author, related_name='author_works')
+    name = models.CharField(max_length=30)
     url = models.URLField()
     poster = models.ImageField()
 
@@ -32,25 +32,48 @@ class MangaCatalog(models.Model):
         return "manga: {}\nurl: {}".format(self.manga_name, self.url)
 
 
-class MangaPoster(models.Model):
-    catalog = models.ForeignKey(MangaCatalog, related_name='posters')
+class Poster(models.Model):
+    manga = models.ForeignKey(Manga, related_name='posters')
     image = models.ImageField()
 
+    def __str__(self):
+        return "Poster for {}".format(self.manga.name)
 
-class MangaChapter(models.Model):
-    catalog = models.ForeignKey(MangaCatalog, related_name='chapters')
+
+class Chapter(models.Model):
+    manga = models.ForeignKey(Manga, related_name='chapters')
     chapter_name = models.CharField(max_length=100, null=True)
     tom = models.IntegerField()
-    chapter = models.IntegerField()
+    number = models.IntegerField()
     added = models.DateField()
 
     class Meta:
         unique_together = ('catalog', 'chapter')
         ordering = ('chapter',)
 
+    def __str__(self):
+        return "{} chapter of {} manga".format(self.number, self.manga.name)
 
-class MangaPage(models.Model):
-    chapter = models.ForeignKey(MangaChapter, related_name='page')
+
+PageSizes = {
+    "small",
+    "medium",
+    "big",
+    "retina"
+}
+
+
+class Page(models.Model):
+    chapter = models.ForeignKey(Chapter, related_name='page')
+    size = models.CharField(choices=PageSizes)
+    size_x = models.IntegerField(validators=[lambda x: x > 0])
+    size_y = models.IntegerField(validators=[lambda x: x > 0])
+    number = models.IntegerField()
     url = models.URLField()
     image = models.ImageField()
+
+    def __str__(self):
+        return "{} page of {} chapter of {}".format(
+            self.number, self.chapter.number, self.chapter.manga.name
+        )
 
