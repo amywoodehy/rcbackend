@@ -6,13 +6,21 @@ from rest_framework import generics, permissions
 from mangacache.serializers import AuthorSerializer, MangaSerializer, ChapterSerializer
 
 
+class AuthorList(generics.ListCreateAPIView):
+    queryset = Author.objects.all()
+    serializer_class = AuthorSerializer
+
+
+class AuthorDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Author.objects.all()
+    serializer_class = AuthorSerializer
+    lookup_field = 'name'
+
+
 class MangaList(generics.ListCreateAPIView):
     queryset = Manga.objects.all()
     serializer_class = MangaSerializer
     # permission_classes = (permissions.IsAuthenticatedOrReadOnly)
-
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
 
 
 class MangaDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -42,9 +50,4 @@ class ChapterDetail(generics.RetrieveUpdateDestroyAPIView):
         obj = get_object_or_404(queryset, **filter_kwargs)
         self.check_object_permissions(self.request, obj)
         return obj
-
-
-class AuthorList(generics.ListAPIView):
-    queryset = Author.objects.all()
-    serializer_class = AuthorSerializer
 

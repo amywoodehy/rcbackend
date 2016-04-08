@@ -1,14 +1,13 @@
 from django.db import models
 
 
-# Create your models here.
 class Author(models.Model):
     """
         Для получения манги по автору. Нужно ли?
     """
     name = models.CharField(max_length=100)
     url = models.URLField()
-    image = models.ImageField()
+    # image = models.ImageField()
     description = models.CharField(max_length=1000)
 
     def __str__(self):
