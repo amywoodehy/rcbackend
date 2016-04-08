@@ -1,6 +1,8 @@
 .idea/*
 *.bk
-rcbackend/mangacache/migrations/*
+rcbackend/mangacache/migrations/
+rcbackend/db.sqlite3
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
