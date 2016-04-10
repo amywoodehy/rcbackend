@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404
-
-from mangacache.models import Chapter, Page, Manga, Author
 from rest_framework import generics
+
+from mangacache.models import Chapter, Manga, Author
 from mangacache.serializers import AuthorSerializer, MangaSerializer, ChapterSerializer
 
 

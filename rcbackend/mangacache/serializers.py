@@ -1,7 +1,8 @@
 from datetime import datetime
 
 from rest_framework import serializers
-from mangacache.models import Chapter, Manga, Author, Poster, Page
+
+from mangacache.models import Chapter, Manga, Author
 
 
 class MangaDetailSerializer(serializers.Serializer):
@@ -11,6 +12,12 @@ class MangaDetailSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         return Manga.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get("name", instance.name)
+        instance.url = validated_data.get("url", instance.url)
+        instance.description = validated_data.get("description", instance.description)
+        return instance
 
 
 class AuthorSerializer(serializers.ModelSerializer):
@@ -47,10 +54,10 @@ class ChapterSerializer(serializers.ModelSerializer):
         instance.tom = validated_data.get('tom', instance.tom)
         instance.number = validated_data.get('number', instance.number)
         instance.added = validated_data.get('added', instance.added)
-
         for item in validated_data["pages"]:
             page = instance.pages.update(**item)
             page.save()
+        return instance
 
 
 class MangaSerializer(serializers.Serializer):
