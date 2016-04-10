@@ -1,7 +1,7 @@
 .idea/*
 *.bk
 /rcbackend/db.sqlite3
-mangacache/migrations/
+mangacache/migrations/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
