@@ -1,53 +1,52 @@
-from django.shortcuts import get_object_or_404
+from django.shortcuts import render
 
-from mangacache.models import Chapter, Page, Manga, Author
-from mangacache.serializers import AuthorSerializer, MangaSerializer, ChapterSerializer
-from rest_framework import generics, permissions
-from mangacache.serializers import AuthorSerializer, MangaSerializer, ChapterSerializer
-
-
-class AuthorList(generics.ListCreateAPIView):
-    queryset = Author.objects.all()
-    serializer_class = AuthorSerializer
+# Create your views here.
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.renderers import JSONRenderer
+from rest_framework.parsers import JSONParser
+from mangacache.models import Catalog, Chapter
+from mangacache.serializers import ChapterSerializer
 
 
-class AuthorDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Author.objects.all()
-    serializer_class = AuthorSerializer
-    lookup_field = 'name'
+class JSONResponse(HttpResponse):
+    """
+    An HttpResponse that renders its content into JSON.
+    """
+    def __init__(self, data, **kwargs):
+        content = JSONRenderer().render(data)
+        kwargs['content_type'] = 'application/json'
+        super(JSONResponse, self).__init__(content, **kwargs)
 
 
-class MangaList(generics.ListCreateAPIView):
-    queryset = Manga.objects.all()
-    serializer_class = MangaSerializer
-    # permission_classes = (permissions.IsAuthenticatedOrReadOnly)
+@csrf_exempt
+def catalog_list(request):
+    """
+    List all code snippets, or create a new snippet.
+    """
+    if request.method == 'GET':
+        chapter = MangaCatalog.objects.all()
+        serializer = MangaCatalogSerializer(chapter, many=True)
+        return JSONResponse(serializer.data)
+
+    elif request.method == 'POST':
+        data = JSONParser().parse(request)
+        serializer = MangaCatalogSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JSONResponse(serializer.data, status=201)
+        return JSONResponse(serializer.errors, status=400)
 
 
-class MangaDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Manga.objects.all()
-    serializer_class = MangaSerializer
-    lookup_field = 'name'
+@csrf_exempt
+def manga(request, manga_name):
 
+    print(manga_name)
+    try:
+        catalog = MangaCatalog.objects.get(manga_name=manga_name)
+    except MangaCatalog.DoesNotExist:
+        return HttpResponse(status=404)
 
-class ChapterList(generics.ListCreateAPIView):
-    queryset = Chapter.objects.all()
-    serializer_class = ChapterSerializer
-
-    def perform_create(self, serializer):
-        serializer.save()
-
-
-class ChapterDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Chapter.objects.all()
-    serializer_class = ChapterSerializer
-
-    def get_object(self):
-        queryset = self.filter_queryset(self.get_queryset())
-        filter_kwargs = {
-            'name': self.kwargs['name'],
-            'number': self.kwargs['number']
-            }
-        obj = get_object_or_404(queryset, **filter_kwargs)
-        self.check_object_permissions(self.request, obj)
-        return obj
-
+    if request.method == 'GET':
+        serializer = MangaCatalogSerializer(catalog)
+        return JSONResponse(serializer.data)

@@ -8,7 +8,7 @@ class Author(models.Model):
     name = models.CharField(max_length=100)
     url = models.URLField()
     # image = models.ImageField()
-    description = models.CharField(max_length=1000)
+    description = models.CharField(null=True, max_length=1000)
 
     def __str__(self):
         return "name: {}\nurl: {}\ndescription: {}\n".format(
@@ -25,6 +25,7 @@ class Manga(models.Model):
     author = models.ForeignKey(Author, related_name='author_works')
     name = models.CharField(max_length=255)
     url = models.URLField()
+    description = models.TextField(null=True)
 
     def __str__(self):
         return "manga: {}\nurl: {}".format(self.manga_name, self.url)
